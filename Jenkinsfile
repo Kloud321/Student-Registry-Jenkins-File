@@ -23,13 +23,24 @@ pipeline {
         }
 
 
-        stage('Deploy') {
+        stage('Build Image') {
             steps {
             // Using credentials to deploy - Example using SSH key credential
                 withCredentials([usernamePassword(credentialsId: 'b5a9dd88-9275-4ae6-9390-0e271db98d71', passwordVariable: 'password', usernameVariable: 'user')]) {
                     bat """ docker build -t ivandamynov/student:1.0.0 .
                             docker login -u %user% --password %pass%
                             docker push ivandamynov/student:1.0.0
+                        """
+                    }
+        }
+        }
+
+        stage('Deploy Image') {
+            steps {
+            // Using credentials to deploy - Example using SSH key credential
+                withCredentials([usernamePassword(credentialsId: 'b5a9dd88-9275-4ae6-9390-0e271db98d71', passwordVariable: 'password', usernameVariable: 'user')]) {
+                    bat """ docker pull ivandamynov/student:1.0.0
+                            docker run -d -p 8082:8082 ivandamynov/student:1.0.0
                         """
                     }
         }

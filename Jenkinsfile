@@ -21,6 +21,19 @@ pipeline {
                 // Your test commands here
             }
         }
+
+
+        stage('Deploy') {
+            steps {
+            // Using credentials to deploy - Example using SSH key credential
+                withCredentials([usernamePassword(credentialsId: 'b5a9dd88-9275-4ae6-9390-0e271db98d71', passwordVariable: 'password', usernameVariable: 'user')]) {
+                    bat """ docker build -t ivandamynov/student:1.0.0 .
+                            docker login -u %user% --password %pass%
+                            docker push ivandamynov/student:1.0.0
+                        """
+                    }
+        }
+        }
     }
     post {
         success {
